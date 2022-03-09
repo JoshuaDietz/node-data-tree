@@ -1,0 +1,27 @@
+{
+  "name": "node-tree",
+  "version": "0.0.1",
+  "description": "A library to model tree structures in node js",
+  "main": "dist/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build" : "tsc"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JoshuaDietz/node-tree.git"
+  },
+  "keywords": [
+    "tree",
+    "nodes"
+  ],
+  "author": "Joshua Dietz",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/JoshuaDietz/node-tree/issues"
+  },
+  "homepage": "https://github.com/JoshuaDietz/node-tree#readme",
+  "devDependencies": {
+    "typescript": "^4.6.2"
+  }
+}
