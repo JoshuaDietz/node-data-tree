@@ -1,79 +1,83 @@
 "use strict";
-var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
-    if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
-        if (ar || !(i in from)) {
-            if (!ar) ar = Array.prototype.slice.call(from, 0, i);
-            ar[i] = from[i];
-        }
-    }
-    return to.concat(ar || Array.prototype.slice.call(from));
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.TreeNode = void 0;
-var TraversalStrategies_1 = require("./TraversalStrategies");
-var TreeNode = /** @class */ (function () {
-    function TreeNode(parentNode) {
-        if (parentNode === void 0) { parentNode = null; }
+const TraversalStrategies_1 = require("./TraversalStrategies");
+class TreeNode {
+    constructor(parentNode = null) {
+        /**
+         * Walks the tree with the given walk function. If the walk function returns false the walk is ended early.
+         * Returns true if the tree was completely walked and false if the walk was stopped early.
+         * @param action
+         * @param strategy
+         * @returns
+         */
+        this.walk = (action, strategy = TraversalStrategies_1.TraversalStrategies.PRE) => {
+            //walk all child elements (and their children etc)
+            if (strategy === TraversalStrategies_1.TraversalStrategies.PRE) {
+                let exitEarly = !action(this);
+                if (exitEarly) {
+                    return false;
+                }
+                for (let i = 0; i < this.childNodes.length; i++) {
+                    let node = this.childNodes[i];
+                    let continueWalk = node.walk(action, strategy);
+                    if (!continueWalk) {
+                        return false;
+                    }
+                }
+            }
+            return true;
+        };
         this.nodeData = {};
         this.childNodes = [];
         this.parentNode = parentNode;
     }
-    TreeNode.prototype.isRoot = function () {
+    isRoot() {
         return this.parentNode === null;
-    };
-    TreeNode.prototype.numChildren = function () {
+    }
+    numChildren() {
         return this.childNodes.length;
-    };
-    TreeNode.prototype.getChildren = function () {
+    }
+    getChildren() {
         return this.childNodes;
-    };
+    }
+    _setParent(parent) {
+        //only to be used by dropChild
+        this.parentNode = parent;
+    }
     /**
      * Adds the given child at the given index. -1 = end
      * @param child
      * @param index
      */
-    TreeNode.prototype.addChild = function (child, index) {
-        if (index === void 0) { index = -1; }
+    addChild(child, index = -1) {
         if (index === -1) {
+            child._setParent(this);
             this.childNodes.push(child);
             return;
         }
         if (index > this.childNodes.length) {
             throw new Error("Index out of range");
         }
+        child._setParent(this);
         this.childNodes.splice(index, 0, child);
-    };
-    TreeNode.prototype.getData = function () {
+    }
+    getData() {
         return this.nodeData;
-    };
-    TreeNode.prototype.setData = function (nodeData) {
+    }
+    setData(nodeData) {
         this.nodeData = nodeData;
-    };
-    TreeNode.prototype.getPath = function () {
+    }
+    getPath() {
         if (this.isRoot()) {
-            return [];
+            return [this];
         }
-        var pathToParent = this.parentNode.getPath();
-        return __spreadArray(__spreadArray([], pathToParent, true), [this], false);
-    };
-    TreeNode.prototype.walk = function (action, strategy) {
-        //walk all child elements (and their children etc)
-        if (strategy === void 0) { strategy = TraversalStrategies_1.TraversalStrategies.PRE; }
-        if (strategy === TraversalStrategies_1.TraversalStrategies.PRE) {
-            var exitEarly = !action(this);
-            if (exitEarly) {
-                return;
-            }
-            for (var i = 0; i < this.childNodes.length; i++) {
-                var node = this.childNodes[i];
-                node.walk(action, strategy);
-            }
-        }
-    };
-    TreeNode.prototype.findFirst = function (predicate, strategy) {
-        if (strategy === void 0) { strategy = TraversalStrategies_1.TraversalStrategies.PRE; }
-        var result = null;
-        this.walk(function (node) {
+        let pathToParent = this.parentNode.getPath();
+        return [...pathToParent, this];
+    }
+    findFirst(predicate, strategy = TraversalStrategies_1.TraversalStrategies.PRE) {
+        let result = null;
+        this.walk((node) => {
             if (predicate(node)) {
                 //found
                 result = node;
@@ -82,22 +86,23 @@ var TreeNode = /** @class */ (function () {
             return true;
         });
         return result;
-    };
-    TreeNode.prototype.findAll = function (predicate) {
-        var result = [];
-        this.walk(function (node) {
+    }
+    findAll(predicate) {
+        let result = [];
+        this.walk((node) => {
             if (predicate(node)) {
                 //found
                 result.push(node);
-                return false; //to halt the walk
             }
             return true;
         });
         return result;
-    };
-    TreeNode.prototype.dropChild = function (childIndex) {
+    }
+    dropChild(childIndex) {
+        let child = this.childNodes[childIndex];
         this.childNodes.splice(childIndex, 1);
-    };
-    return TreeNode;
-}());
+        child._setParent(null);
+        return child;
+    }
+}
 exports.TreeNode = TreeNode;

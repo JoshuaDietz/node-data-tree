@@ -1,13 +1,10 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Tree = void 0;
-var TreeNode_1 = require("./TreeNode");
-var Tree = /** @class */ (function () {
-    function Tree() {
-    }
-    Tree.parse = function (model, config) {
-        if (config === void 0) { config = { dataFieldName: "nodeData", childrenFieldName: "children" }; }
-        var children = model[config.childrenFieldName];
+const TreeNode_1 = require("./TreeNode");
+class Tree {
+    static parse(model, config = { dataFieldName: "nodeData", childrenFieldName: "children" }, parentNode = null) {
+        let children = model[config.childrenFieldName];
         if (children === null || children === undefined) {
             children = [];
         }
@@ -15,32 +12,32 @@ var Tree = /** @class */ (function () {
             throw new Error('The child property is not of type array');
         }
         if (model[config.dataFieldName]) {
-            var node = new TreeNode_1.TreeNode();
+            let node = new TreeNode_1.TreeNode(parentNode);
             node.setData(model[config.dataFieldName]);
-            for (var i = 0; i < children.length; i++) {
-                var child = children[i];
-                var childNode = Tree.parse(child, config);
-                if (childNode) {
+            for (let i = 0; i < children.length; i++) {
+                let child = children[i];
+                if (child[config.dataFieldName]) {
+                    let childNode = Tree.parse(child, config, node);
                     node.addChild(childNode);
                 }
             }
             return node;
         }
-        return null;
-    };
-    Tree.toJson = function (node, dataCopyFunction, config) {
-        if (config === void 0) { config = { dataFieldName: "nodeData", childrenFieldName: "children" }; }
-        var json = {};
+        else {
+            throw new Error('No data field present. Maybe you are using alternative data-field names and forgot to supply the configuration object necessary');
+        }
+    }
+    static toJson(node, dataCopyFunction, config = { dataFieldName: "nodeData", childrenFieldName: "children" }) {
+        let json = {};
         json[config.dataFieldName] = dataCopyFunction(node.getData());
         json[config.childrenFieldName] = [];
-        var nodeChildren = node.getChildren();
-        for (var i = 0; i < nodeChildren.length; i++) {
-            var child = nodeChildren[i];
-            var childJson = Tree.toJson(child, dataCopyFunction, config);
+        let nodeChildren = node.getChildren();
+        for (let i = 0; i < nodeChildren.length; i++) {
+            let child = nodeChildren[i];
+            let childJson = Tree.toJson(child, dataCopyFunction, config);
             json[config.childrenFieldName].push(childJson);
         }
         return json;
-    };
-    return Tree;
-}());
+    }
+}
 exports.Tree = Tree;
