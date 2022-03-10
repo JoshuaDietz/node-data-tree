@@ -6,8 +6,11 @@ Note that this library is *not* extensively tested (look at the tests) and it no
 Usage:
 ------
 For a more detailed function overview please take a look at the jsdoc comments in Tree.ts and TreeNode.ts
+### Installation
+
+    npm i --save node-data-tree
 ### Example
-    import {Tree, TreeNode} from '/path/to/index.js'
+    import {Tree, TreeNode} from 'node-data-tree'
 
     let tree = Tree.parse({
         nodeData : {
