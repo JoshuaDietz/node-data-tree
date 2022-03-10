@@ -3,7 +3,7 @@ import { TreeNode } from "./TreeNode";
 /**
  * Not intended to be instantiated, just a container for it's static methods
  */
-export class Tree {
+export abstract class Tree {
 
     /**
      * Parses the given object structure into a new tree. By default the field "nodeData" is used for the data of the node and the field "children" is the array of children
