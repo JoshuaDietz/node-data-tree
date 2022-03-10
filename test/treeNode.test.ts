@@ -1,6 +1,6 @@
 import { expect } from 'chai'
-import {Tree} from '../Tree'
-import { TreeNode } from '../TreeNode'
+import {Tree} from '../src/Tree'
+import { TreeNode } from '../src/TreeNode'
 
 describe('', () => {
     let tree : TreeNode
