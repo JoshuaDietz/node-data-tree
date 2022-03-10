@@ -1,7 +1,7 @@
-# node-tree
+# node-data-tree
 A library to implement tree-like structures in node.js
 
-Note that this library is *not* extensively tested (look at the tests) and it not feature-complete either. I for now just implemented the features that I needed.
+Note that this library is *not* extensively tested (look at the tests) and is not feature-complete either. For now, I just implemented the features that I needed.
 
 Usage:
 ------
