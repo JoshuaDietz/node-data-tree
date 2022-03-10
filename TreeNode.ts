@@ -24,6 +24,11 @@ export class TreeNode {
         return this.childNodes
     }
 
+    _setParent(parent : TreeNode | null) {
+        //only to be used by dropChild
+        this.parentNode = parent
+    }
+
     /**
      * Adds the given child at the given index. -1 = end
      * @param child 
@@ -31,6 +36,7 @@ export class TreeNode {
      */
     addChild(child : TreeNode, index = -1) {
         if (index === -1) {
+            child._setParent(this)
             this.childNodes.push(child)
             return
         }
@@ -39,10 +45,11 @@ export class TreeNode {
             throw new Error("Index out of range")
         }
 
+        child._setParent(this)
         this.childNodes.splice(index, 0, child)
     }
 
-    getData() : object {
+    getData() : any {
         return this.nodeData
     }
 
@@ -53,27 +60,39 @@ export class TreeNode {
 
     getPath() : TreeNode[] {
         if (this.isRoot()) {
-            return []
+            return [this]
         }
 
         let pathToParent = (this.parentNode as TreeNode).getPath()
         return [...pathToParent, this]
     }
 
-    walk(action : (node : TreeNode) => boolean, strategy = TraversalStrategies.PRE) {
+    /**
+     * Walks the tree with the given walk function. If the walk function returns false the walk is ended early.
+     * Returns true if the tree was completely walked and false if the walk was stopped early.
+     * @param action 
+     * @param strategy 
+     * @returns 
+     */
+    walk = (action : (node : TreeNode) => boolean, strategy = TraversalStrategies.PRE) : boolean => {
         //walk all child elements (and their children etc)
 
         if (strategy === TraversalStrategies.PRE) {
             let exitEarly = !action(this)
             if (exitEarly) {
-                return
+                return false
             }
 
             for (let i = 0; i < this.childNodes.length; i++) {
                 let node = this.childNodes[i]
-                node.walk(action, strategy)
+                let continueWalk = node.walk(action, strategy)
+                if (!continueWalk) {
+                    return false
+                }
             }
         }
+
+        return true
     }
 
     findFirst(predicate : (node : TreeNode) => boolean, strategy = TraversalStrategies.PRE) : TreeNode | null {
@@ -95,7 +114,6 @@ export class TreeNode {
             if (predicate(node)) {
                 //found
                 result.push(node)
-                return false //to halt the walk
             }
             return true
         })
@@ -103,7 +121,10 @@ export class TreeNode {
     }
 
     dropChild(childIndex : number) {
+        let child = this.childNodes[childIndex]
         this.childNodes.splice(childIndex, 1);
+        child._setParent(null)
+        return child
     }
 
 

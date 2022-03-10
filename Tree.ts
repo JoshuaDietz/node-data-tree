@@ -1,7 +1,7 @@
 import { TreeNode } from "./TreeNode";
 
 export class Tree {
-    static parse(model : any, config = {dataFieldName : "nodeData", childrenFieldName : "children"}) : TreeNode | null {
+    static parse(model : any, config = {dataFieldName : "nodeData", childrenFieldName : "children"}, parentNode : TreeNode | null = null) : TreeNode {
         let children = model[config.childrenFieldName]
         if (children === null || children === undefined) {
             children = []
@@ -12,20 +12,21 @@ export class Tree {
         }
 
         if (model[config.dataFieldName]) {
-            let node = new TreeNode()
+            let node = new TreeNode(parentNode)
             node.setData(model[config.dataFieldName])
             for (let i = 0; i < children.length; i++) {
                 let child = children[i]
-                let childNode = Tree.parse(child, config)
-                if (childNode) {
+                if (child[config.dataFieldName]) {
+                    let childNode = Tree.parse(child, config, node)
                     node.addChild(childNode)
                 }
                 
+                
             }
             return node
+        } else {
+            throw new Error('No data field present. Maybe you are using alternative data-field names and forgot to supply the configuration object necessary')
         }
-
-        return null
     }
 
     static toJson(node : TreeNode, dataCopyFunction : (nodeData : object) => object, config = {dataFieldName : "nodeData", childrenFieldName : "children"}) : object {
