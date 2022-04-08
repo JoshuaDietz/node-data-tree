@@ -1,11 +1,11 @@
 {
   "name": "node-data-tree",
-  "version": "0.0.3",
+  "version": "0.1.0",
   "description": "A library to model tree structures in node js",
   "main": "dist/index.js",
   "scripts": {
     "test": "./node_modules/.bin/mocha --require ts-node/register ./test/*.test.ts",
-    "test-debug" : "./node_modules/.bin/mocha --require ts-node/register --inspect-brk ./test/*.test.ts",
+    "test-debug": "./node_modules/.bin/mocha --require ts-node/register --inspect-brk ./test/*.test.ts",
     "build": "tsc"
   },
   "repository": {
