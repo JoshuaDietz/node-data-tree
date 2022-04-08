@@ -105,6 +105,19 @@ class TreeNode {
         return [...pathToParent, this];
     }
     /**
+     * Returns an array containing the node and all children recursively
+     */
+    flatten() {
+        let result = [];
+        console.log('Current node id: ' + this.getData().id);
+        this.walk((node) => {
+            console.log('Current node id: ' + node.getData().id);
+            result.push(node);
+            return true;
+        });
+        return result;
+    }
+    /**
      * Like findAll but stops when the first node is found. Returns null if no node was found.
      * @param predicate
      * @param strategy

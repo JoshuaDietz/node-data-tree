@@ -7,12 +7,14 @@ describe('', () => {
     beforeEach(() => {
         tree = Tree.parse({
             nodeData : {
+                id : 1,
                 key1 : "value of key 1",
                 key2 : 42
             },
             children : [
                 {
                     nodeData : {
+                        id : 2,
                         key3 : "value of key 3",
                         key4 : true,
                         iWantToBeFound : true
@@ -20,6 +22,7 @@ describe('', () => {
                     children : [
                         {
                             nodeData : {
+                                id : 3,
                                 key5 : "value of key 5"
                             }
                         }
@@ -28,6 +31,7 @@ describe('', () => {
 
                 {
                     nodeData : {
+                        id : 4,
                         key6 : {
                             test : "ok"
                         },
@@ -62,6 +66,15 @@ describe('', () => {
         })
 
         expect(nodesVisited).to.deep.equal(intendedVisitOrder)
+    })
+
+    it('Should correctly flatten the tree', () => {
+        let flattened = tree.flatten()
+        let ids = flattened.map((node) => {
+            return node.getData().id
+        })
+
+        expect(ids.sort()).to.eql([1, 2, 3, 4].sort())
     })
 
     it('Should correctly walk the tree (pre) and halt at the specific element', () => {
@@ -155,7 +168,7 @@ describe('', () => {
         let droppedChild = tree.dropChild(1)
 
         let childShouldLookLike = new TreeNode()
-        childShouldLookLike.setData({key6 : {test : "ok"}, iWantToBeFound : true})
+        childShouldLookLike.setData({id : 4, key6 : {test : "ok"}, iWantToBeFound : true})
 
         console.log('DroppedChild: ', droppedChild)
         console.log('childShouldLookLike: ', childShouldLookLike)
@@ -164,6 +177,7 @@ describe('', () => {
         expect(droppedChild.isRoot()).to.be.true
         expect(tree.numChildren()).to.equal(1)
         expect(tree.getChildren()[0].getData()).to.deep.equal({
+            id : 2,
             key3 : "value of key 3",
             key4 : true,
             iWantToBeFound : true

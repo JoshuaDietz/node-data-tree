@@ -55,6 +55,10 @@ export declare class TreeNode {
      */
     walk: (action: (node: TreeNode) => boolean, strategy?: TraversalStrategies) => boolean;
     /**
+     * Returns an array containing the node and all children recursively
+     */
+    flatten(): TreeNode[];
+    /**
      * Like findAll but stops when the first node is found. Returns null if no node was found.
      * @param predicate
      * @param strategy
